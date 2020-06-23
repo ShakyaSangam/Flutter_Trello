@@ -3,6 +3,6 @@
 A new Flutter project.
 
 # Features
- ✔️ Online
+ ✔️ Online\n
  ✔️ Dragable
  ❌ Offline [It will be added soon]
