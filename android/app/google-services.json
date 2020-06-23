@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "86184802842",
+    "firebase_url": "https://trello-fd5d3.firebaseio.com",
+    "project_id": "trello-fd5d3",
+    "storage_bucket": "trello-fd5d3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:86184802842:android:96d27b783fab128bc6efa3",
+        "android_client_info": {
+          "package_name": "com.hikre.fluttertrello"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "86184802842-qj78v7na4f0pjtq10pmlg7r1vpnjf6gj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpF4infyTcyZdr1PBKa2F7tV7Pd6WhWzw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "86184802842-qj78v7na4f0pjtq10pmlg7r1vpnjf6gj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
