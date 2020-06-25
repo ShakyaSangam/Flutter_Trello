@@ -2,7 +2,8 @@
 
 A new Flutter project.
 
+
 # Features
- ✔️ Online
- ✔️ Dragable
- ❌ Offline [It will be added soon]
+ 1✔️ Online
+ 2 ✔️ Dragable
+ 3 ❌ Offline [It will be added soon]
