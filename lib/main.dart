@@ -2,8 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_trello/app/utils/todo.dart';
+import 'package:flutter_trello/provider/homepage.dart';
+import 'package:provider/provider.dart';
 
 import 'app/pages/trello/trello_Screen.dart';
+import 'app/pages/try/offline_try.dart';
+import 'app/pages/try/try_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,7 +22,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    deleteCompleteTask();
+//    deleteCompleteTask();
   }
 
   void deleteCompleteTask() {
@@ -45,6 +49,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    // * screen preferred scale
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -60,3 +65,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+//MultiProvider(providers: [ChangeNotifierProvider(create: (context) => TrelloScreenProvider(),)], child: OfflineTry())
