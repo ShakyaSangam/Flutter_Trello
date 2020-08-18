@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_trello/app/services/online_crud.dart';
+import 'package:flutter_trello/app/services/online_services.dart';
 import 'package:flutter_trello/app/utils/todo.dart';
+import 'package:flutter_trello/data/repositries/repository.dart';
 
 Positioned cardBanner(Color firstColor, Color secondColor, [double width]) {
   return Positioned(
@@ -73,13 +74,20 @@ Card doneTaskCard(int index, List<DocumentSnapshot> list) {
         ),
         PopupMenuButton<String>(
           onSelected: (String value) {
+
             // * shifting to different collection
-            Services(collectionName: value)
-              ..addRecord(docName: list[index].data["task"]);
+            Repository()..shiftTaskRecord(task: list[index].data["task"], dateTime: DateTime.now().millisecondsSinceEpoch, tableName: value);
+
+            // * shifting to different collection
+            // Services(collectionName: value)
+            //   ..addRecord(docName: list[index].data["task"], dateTime: DateTime.now().millisecondsSinceEpoch);
 
             // * delete from done collection
-            Services(collectionName: Todo().features["completed"])
-              ..deleteRecord(docName: list[index].data["task"]);
+            Repository()..deleteTask(task: list[index].data["task"], tableName: Todo().features["completed"]);
+
+            // * delete from done collection
+            // Services(collectionName: Todo().features["completed"])
+            //   ..deleteRecord(docName: list[index].data["task"]);
           },
           itemBuilder: (BuildContext context) {
             return <PopupMenuEntry<String>>[
