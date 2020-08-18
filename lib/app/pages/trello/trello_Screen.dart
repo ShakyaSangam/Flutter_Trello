@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_trello/app/services/online_crud.dart';
+import 'package:flutter_trello/app/services/offline_services.dart';
+import 'package:flutter_trello/app/services/online_services.dart';
 import 'package:flutter_trello/app/utils/todo.dart';
+import 'package:flutter_trello/data/repositries/repository.dart';
 
 // * exporting widgets
 import '../../widgets/export_widgets.dart';
@@ -31,6 +33,11 @@ class _TrelloScreenState extends State<TrelloScreen> {
     fetchThingsToDo();
     fetchDoing();
     fetchDone();
+    oflineFetch();
+  }
+
+  oflineFetch(){
+    SqDatabase()..fetch(tabelName: SqDatabase.thingstodo).then((value) => print(value.length));
   }
 
   fetchDone() {
@@ -44,7 +51,7 @@ class _TrelloScreenState extends State<TrelloScreen> {
         });
 
         snapshot.documents.forEach(
-          (DocumentSnapshot documentSnapshot) {
+              (DocumentSnapshot documentSnapshot) {
             // * ARRAY START
             setState(() {
               doneList.add(documentSnapshot);
@@ -69,7 +76,7 @@ class _TrelloScreenState extends State<TrelloScreen> {
           doingList.clear();
         });
         snapshot.documents.forEach(
-          (DocumentSnapshot documentSnapshot) {
+              (DocumentSnapshot documentSnapshot) {
             // * ARRAY START
             setState(() {
               doingList.add(documentSnapshot);
@@ -90,12 +97,12 @@ class _TrelloScreenState extends State<TrelloScreen> {
     thingsTodoList = [];
     Services(collectionName: Todo().features["todo"])
       ..fetchCompletedTask("date").listen(
-        (QuerySnapshot snapshot) {
+            (QuerySnapshot snapshot) {
           setState(() {
             thingsTodoList.clear();
           });
           snapshot.documents.forEach(
-            (DocumentSnapshot documentSnapshot) {
+                (DocumentSnapshot documentSnapshot) {
               // * ARRAY START
               setState(() {
                 thingsTodoList.add(documentSnapshot);
@@ -125,7 +132,7 @@ class _TrelloScreenState extends State<TrelloScreen> {
       // * End Drawer 🙌
       drawer: SafeArea(
         child: Center(
-          child: buildContainer(size, todoName),
+          child: BuildContainer(),
         ),
       ),
       body: SafeArea(
@@ -158,18 +165,24 @@ class _TrelloScreenState extends State<TrelloScreen> {
               .document(value)
               .get()
               .then((document) {
-            setState(() {
-              timeDate = document.data["date"];
-            });
+            // setState(() {
+            //   timeDate = document.data["date"];
+            // });
+
+            // * shifting task in both online && offline
+            Repository()..shiftingTask(task: value, dateTime: document.data["date"], tableName: Todo().features["completed"]);
+
+            // * deleting task in both online && offline
+            Repository()..deleteTask(task: value, tableName: collectionName);
 
             // * shifting task to different collection
-            Services(collectionName: Todo().features["completed"])
-              ..shiftTasks(value: value, dateTime: timeDate);
+            // Services(collectionName: Todo().features["completed"])
+            //   ..shiftTasks(value: value, dateTime: document.data["date"]);
           });
 
           // * deleting task from previous collection
-          Services(collectionName: collectionName)
-            ..deleteRecord(docName: value);
+          // Services(collectionName: collectionName)
+          //   ..deleteRecord(docName: value);
         }
         // else{
         // TODO vibrate when improcess list is dragged
@@ -211,14 +224,14 @@ class _TrelloScreenState extends State<TrelloScreen> {
       padding: const EdgeInsets.all(8.0),
       child: list.length > 0
           ? ListView.builder(
-              shrinkWrap: true,
-              itemCount: list.length,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                // String data = doneList[index].data["task"];
-                return doneTaskCard(index, list);
-              },
-            )
+        shrinkWrap: true,
+        itemCount: list.length,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (BuildContext context, int index) {
+          // String data = doneList[index].data["task"];
+          return doneTaskCard(index, list);
+        },
+      )
           : Text("No Data"),
     );
   }
@@ -231,9 +244,9 @@ class _TrelloScreenState extends State<TrelloScreen> {
       child: Card(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-        )),
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+            )),
         child: Stack(
           children: [
             SingleChildScrollView(
@@ -263,18 +276,24 @@ class _TrelloScreenState extends State<TrelloScreen> {
               .document(value)
               .get()
               .then((document) {
-            setState(() {
-              timeDate = document.data["date"];
-            });
+            // setState(() {
+            //   timeDate = document.data["date"];
+            // });
+
+            // * shifting task in both online && offline
+            Repository()..shiftingTask(task: value, dateTime: document.data["date"], tableName: Todo().features["inprocess"]);
+
+            // * deleting task in both online && offline
+            Repository()..deleteTask(task: value, tableName: collectionName);
 
             // * shifting task doing collection
-            Services(collectionName: Todo().features["inprocess"])
-              ..shiftTasks(value: value, dateTime: timeDate);
+            // Services(collectionName: Todo().features["inprocess"])
+            //   ..shiftTasks(value: value, dateTime: document.data["date"]);
           });
 
           // * deleting task
-          Services(collectionName: collectionName)
-            ..deleteRecord(docName: value);
+          // Services(collectionName: collectionName)
+          //   ..deleteRecord(docName: value);
         }
       },
       builder: (BuildContext context, List<dynamic> accecptedData,
@@ -286,27 +305,27 @@ class _TrelloScreenState extends State<TrelloScreen> {
 
   Padding inProcessList(List<DocumentSnapshot> doingList) {
     return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: doingList.length > 0
-            ? ListView.builder(
-                shrinkWrap: true,
-                itemCount: doingList.length,
-                physics: BouncingScrollPhysics(),
-                itemBuilder: (BuildContext context, int index) {
-                  String data = doingList[index].data["task"];
-                  return _buildDoingDragable(data, index);
-                },
-              )
-            : Container(
-                decoration:
-                    BoxDecoration(border: Border.all(color: Colors.blueGrey)),
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  "+ Drag List here",
-                  style: TextStyle(color: Colors.blueGrey),
-                ),
-              ),
-      );
+      padding: const EdgeInsets.all(8.0),
+      child: doingList.length > 0
+          ? ListView.builder(
+        shrinkWrap: true,
+        itemCount: doingList.length,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (BuildContext context, int index) {
+          String data = doingList[index].data["task"];
+          return _buildDoingDragable(data, index);
+        },
+      )
+          : Container(
+        decoration:
+        BoxDecoration(border: Border.all(color: Colors.blueGrey)),
+        padding: EdgeInsets.all(10),
+        child: Text(
+          "+ Drag List here",
+          style: TextStyle(color: Colors.blueGrey),
+        ),
+      ),
+    );
   }
 
   Draggable<String> _buildDoingDragable(String data, int index) {
@@ -343,8 +362,8 @@ class _TrelloScreenState extends State<TrelloScreen> {
       child: Card(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-        )),
+              topLeft: Radius.circular(10),
+            )),
         child: Stack(
           children: [
             SingleChildScrollView(
@@ -376,18 +395,24 @@ class _TrelloScreenState extends State<TrelloScreen> {
               .document(value)
               .get()
               .then((document) {
-            setState(() {
-              timeDate = document.data["date"];
-            });
+            // setState(() {
+            //   timeDate = document.data["date"];
+            // });
+
+            // * shifting task in both online && offline
+            Repository()..shiftingTask(task: value, dateTime: document.data["date"], tableName: Todo().features["todo"]);
+
+            // * deleting task in both online && offline
+            Repository()..deleteTask(task: value, tableName: collectionName);
 
             // * shifting task thingstodo collection
-            Services(collectionName: Todo().features["todo"])
-              ..shiftTasks(value: value, dateTime: timeDate);
+            // Services(collectionName: Todo().features["todo"])
+            //   ..shiftTasks(value: value, dateTime: document.data["date"]);
           });
 
           // * deleting task
-          Services(collectionName: collectionName)
-            ..deleteRecord(docName: value);
+          // Services(collectionName: collectionName)
+          //   ..deleteRecord(docName: value);
         }
       },
       builder: (BuildContext context, List<dynamic> accecptedData,
@@ -403,25 +428,25 @@ class _TrelloScreenState extends State<TrelloScreen> {
       padding: const EdgeInsets.all(8.0),
       child: thingsTodoList.length > 0
           ? ListView.builder(
-              shrinkWrap: true,
-              itemCount: thingsTodoList.length,
-              physics: BouncingScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                String data = thingsTodoList[index].data["task"];
-                return _buildThingsTODODragable(data, index);
-              },
-            )
+        shrinkWrap: true,
+        itemCount: thingsTodoList.length,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (BuildContext context, int index) {
+          String data = thingsTodoList[index].data["task"];
+          return _buildThingsTODODragable(data, index);
+        },
+      )
           : Container(
-              decoration:
-                  BoxDecoration(border: Border.all(color: Colors.blueGrey)),
-              padding: EdgeInsets.all(10),
-              child: Text(
-                doingList.length > 0 // * if in process list is empty 😍
-                    ? "+ Drag List here"
-                    : "Empty Todo List",
-                style: TextStyle(color: Colors.blueGrey),
-              ),
-            ),
+        decoration:
+        BoxDecoration(border: Border.all(color: Colors.blueGrey)),
+        padding: EdgeInsets.all(10),
+        child: Text(
+          doingList.length > 0 // * if in process list is empty 😍
+              ? "+ Drag List here"
+              : "Empty Todo List",
+          style: TextStyle(color: Colors.blueGrey),
+        ),
+      ),
     );
   }
 
@@ -448,5 +473,5 @@ class _TrelloScreenState extends State<TrelloScreen> {
       ),
     );
   }
-  // * things to do card END
+// * things to do card END
 }
