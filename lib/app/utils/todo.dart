@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Todo {
 
   Map<String, String> features = {
@@ -8,17 +6,18 @@ class Todo {
     "completed": "done"
   };
 
-  Map<String, dynamic> shiftingData(String value, Timestamp dateTime) {
+  Map<String, dynamic> shiftingData(String value, int dateTime) {
     return {
       "task": value,
       "date": dateTime,
     };
   }
 
-  Map<String, dynamic> addingData(String value) {
+  // ! optional datetime of millisecond is initialized
+  Map<String, dynamic> addingData(String value, int dateTime) {
     return {
       "task": value,
-      "date": DateTime.now()
+      "date": dateTime
     };
   }
 }
