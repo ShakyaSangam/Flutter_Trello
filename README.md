@@ -9,7 +9,7 @@ A new Flutter project.
  ❌ Offline [It will be added soon]
  
  # MAIN SCREEN 🤩
-<img src = "https://github.com/ShakyaSangam/Flutter_Trello/blob/offline_services/screenshots/Screenshot_20200818-125914.jpg" width = "400" height = "350">
+<img src = "https://github.com/ShakyaSangam/Flutter_Trello/blob/offline_services/screenshots/Screenshot_20200818-125914.jpg" width = "500" height = "350">
 
 # DONE LIST 😎
-<img src = "https://github.com/ShakyaSangam/Flutter_Trello/blob/offline_services/screenshots/Screenshot_20200818-125918.jpg" width = "400" height = "350">
+<img src = "https://github.com/ShakyaSangam/Flutter_Trello/blob/offline_services/screenshots/Screenshot_20200818-125918.jpg" width = "500" height = "350">
